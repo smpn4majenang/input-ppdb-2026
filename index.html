@@ -9,7 +9,7 @@
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght=300;400;500;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
         }
@@ -133,7 +133,7 @@
                             <div class="absolute inset-y-0 right-12 pr-2 flex items-center pointer-events-none text-gray-400">
                                 <i class="fa-solid fa-chevron-down text-xs"></i>
                             </div>
-                            <button type="button" onclick="regenerateRegNumber()" class="absolute right-2 top-1/2 -translate-y-1/2 text-[10px] bg-blue-50 text-blue-600 hover:bg-blue-100 px-2 py-1.5 rounded-lg font-semibold transition" title="Buat Nomor Acak">
+                            <button type="button" onclick="regenerateRegNumber()" class="absolute right-2 top-1/2 -translate-y-1/2 text-[10px] bg-red-50 text-red-600 hover:bg-red-100 px-2 py-1.5 rounded-lg font-semibold transition" title="Buat Nomor Acak">
                                 <i class="fa-solid fa-arrows-rotate mr-0.5"></i> Acak
                             </button>
                         </div>
@@ -310,17 +310,32 @@
                     </div>
                 </div>
 
+                <!-- Bagian Form Tautan Dokumen Kondisional -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <!-- Tautan File Prestasi (Kondisional - Jika Prestasi / Jika ada) -->
-                    <div id="container_tautan_prestasi" class="hidden">
-                        <label class="block text-sm font-semibold text-gray-700 mb-1">Tautan File Prestasi <span class="text-xs text-gray-400 font-normal">(Opsional jika ada)</span></label>
-                        <input type="url" id="tautan_prestasi" name="tautan_prestasi" class="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition placeholder-gray-400 text-sm bg-white" placeholder="https://drive.google.com/...">
-                    </div>
-
                     <!-- Tautan File KIP/KKS (Kondisional - Jika Afirmasi) -->
                     <div id="container_tautan_afirmasi" class="hidden">
                         <label class="block text-sm font-semibold text-gray-700 mb-1">Tautan File KIP / KKS / KPS <span class="text-red-500">*</span></label>
                         <input type="url" id="tautan_kip_kks" name="tautan_kip_kks" class="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition placeholder-gray-400 text-sm bg-white" placeholder="https://drive.google.com/...">
+                    </div>
+                    
+                    <!-- Tautan File Nilai Rapor (Sebelumnya Tautan File Prestasi - Kondisional jika memilih Prestasi) -->
+                    <div id="container_tautan_rapor" class="hidden">
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Tautan File Nilai Rapor <span class="text-red-500">*</span></label>
+                        <input type="url" id="tautan_rapor" name="tautan_rapor" class="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition placeholder-gray-400 text-sm bg-white" placeholder="https://drive.google.com/...">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- Tautan File TKA (Kondisional - Jika memilih Prestasi) -->
+                    <div id="container_tautan_tka" class="hidden">
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Tautan File TKA <span class="text-red-500">*</span></label>
+                        <input type="url" id="tautan_tka" name="tautan_tka" class="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition placeholder-gray-400 text-sm bg-white" placeholder="https://drive.google.com/...">
+                    </div>
+
+                    <!-- Tautan Piagam (Kondisional - Jika memilih Prestasi - Opsional) -->
+                    <div id="container_tautan_piagam" class="hidden">
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Tautan Piagam <span class="text-xs text-gray-400 font-normal">(Opsional jika ada)</span></label>
+                        <input type="url" id="tautan_piagam" name="tautan_piagam" class="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition placeholder-gray-400 text-sm bg-white" placeholder="https://drive.google.com/...">
                     </div>
                 </div>
             </div>
@@ -330,7 +345,7 @@
                 <p class="text-xs text-gray-500 mb-4 text-center leading-relaxed">
                     Dengan mengirimkan data ini, penginput menyatakan seluruh data calon murid yang tercantum di atas adalah benar dan sesuai dengan berkas dokumen fisik yang sah.
                 </p>
-                <button type="submit" id="submitBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-6 rounded-xl transition shadow-lg hover:shadow-blue-200 transform active:scale-95 flex items-center justify-center gap-2">
+                <button type="submit" id="submitBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-6 rounded-xl transition shadow-lg hover:shadow-red-200 transform active:scale-95 flex items-center justify-center gap-2">
                     <i class="fa-solid fa-paper-plane"></i> Kirim Data Pendaftaran
                 </button>
             </div>
@@ -506,36 +521,59 @@
             const jalurSelect = document.getElementById('jalur_spmb');
             const selectedJalur = jalurSelect.value;
 
+            // Kontrol Nilai Akademik
             const sectionAkademik = document.getElementById('section_akademik_prestasi');
             const inputTka = document.getElementById('nilai_tka');
             const inputRapor = document.getElementById('nilai_rapor');
             const inputKejuaraan = document.getElementById('nilai_kejuaraan');
 
-            const containerPrestasi = document.getElementById('container_tautan_prestasi');
-            const inputPrestasi = document.getElementById('tautan_prestasi');
-
+            // Kontrol Berkas Afirmasi
             const containerAfirmasi = document.getElementById('container_tautan_afirmasi');
             const inputKipKks = document.getElementById('tautan_kip_kks');
 
-            // Reset conditional attributes & elements
+            // Kontrol Berkas Jalur Prestasi (Baru & Sesuai Aturan)
+            const containerRapor = document.getElementById('container_tautan_rapor');
+            const inputTautanRapor = document.getElementById('tautan_rapor');
+
+            const containerTka = document.getElementById('container_tautan_tka');
+            const inputTautanTka = document.getElementById('tautan_tka');
+
+            const containerPiagam = document.getElementById('container_tautan_piagam');
+            const inputTautanPiagam = document.getElementById('tautan_piagam');
+
+            // Reset semua layout form kondisional ke kondisi tersembunyi
             sectionAkademik.classList.add('hidden');
             inputTka.removeAttribute('required');
             inputRapor.removeAttribute('required');
             inputKejuaraan.removeAttribute('required');
 
-            containerPrestasi.classList.add('hidden');
-            
             containerAfirmasi.classList.add('hidden');
             inputKipKks.removeAttribute('required');
 
-            // Apply rules according to chosen path
+            containerRapor.classList.add('hidden');
+            inputTautanRapor.removeAttribute('required');
+
+            containerTka.classList.add('hidden');
+            inputTautanTka.removeAttribute('required');
+
+            containerPiagam.classList.add('hidden');
+
+            // Terapkan logika kondisional sesuai dengan jalur yang dipilih
             if (selectedJalur === 'Prestasi') {
+                // Tampilkan bagian Input Angka Nilai Akademik
                 sectionAkademik.classList.remove('hidden');
                 inputTka.setAttribute('required', 'true');
                 inputRapor.setAttribute('required', 'true');
                 inputKejuaraan.setAttribute('required', 'true');
 
-                containerPrestasi.classList.remove('hidden');
+                // Tampilkan bagian Input Tautan File Prestasi baru di Seksi 4
+                containerRapor.classList.remove('hidden');
+                inputTautanRapor.setAttribute('required', 'true');
+
+                containerTka.classList.remove('hidden');
+                inputTautanTka.setAttribute('required', 'true');
+
+                containerPiagam.classList.remove('hidden'); // Piagam bersifat opsional (tidak ada required)
             } else if (selectedJalur === 'Afirmasi') {
                 containerAfirmasi.classList.remove('hidden');
                 inputKipKks.setAttribute('required', 'true');
